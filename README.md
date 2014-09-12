@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/minond/acm.svg?branch=master)](https://travis-ci.org/minond/acm)
+[![Coverage Status](https://coveralls.io/repos/minond/acm/badge.png?branch=master)](https://coveralls.io/r/minond/acm?branch=master)
+
 `acm - another configuration module` is a configuration reader. it can retrieve
 values from command line arguments, environment variables, and local files of
 different formats.
@@ -16,7 +19,7 @@ example, when checking for:
 
 this is also all configurable:
 
-```
+```js
 var Configuration = require('acm'),
 
 // use defaults
@@ -37,6 +40,7 @@ var config2 = new Configuration({
     }
 });
 ```
+
 #### `.get(path)`
 
 running `config.get('github.username')` will result in the following checks:
