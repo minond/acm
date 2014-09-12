@@ -1,0 +1,39 @@
+{
+  "name": "acm",
+  "version": "0.0.1",
+  "description": "another configuraiton module",
+  "main": "src/configuration.js",
+  "keywords": [
+    "config",
+    "configuration"
+  ],
+  "scripts": {
+    "test": "grunt test"
+  },
+  "dependencies": {
+    "yamljs": "~0.1.6",
+    "json5": "~0.2.0",
+    "ini": "~1.2.1",
+    "lodash-node": "~2.4.1",
+    "minimist": "~1.1.0",
+    "deep-get-set": "~0.1.1"
+  },
+  "devDependencies": {
+    "grunt-mkdir": "~0.1.2",
+    "grunt-exec": "~0.4.6",
+    "merge-defaults": "~0.2.1",
+    "expect.js": "~0.3.1",
+    "grunt-contrib-clean": "~0.6.0",
+    "json5": "~0.2.0",
+    "glob": "~4.0.5",
+    "lodash": "~2.4.1",
+    "load-grunt-tasks": "~0.6.0",
+    "mocha": "~1.21.4",
+    "grunt-spell": "~0.2.1",
+    "coveralls": "~2.11.1",
+    "grunt": "~0.4.5",
+    "grunt-complexity": "~0.2.0",
+    "istanbul": "~0.3.2",
+    "grunt-contrib-jshint": "~0.10.0"
+  }
+}
