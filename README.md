@@ -57,7 +57,8 @@ modified by updating the contents of `acm.prototype.readers`
 
 available extensions are: `.ini`, `.json5`, `.json`, `.yaml`, and `.yml`. parsers
 for each of these extensions are located in `acm.prototype.parsers`. adding new
-properties to this object will add support for addition file extension.
+properties to this object will add support for addition file extension. property
+values should be functions that take a string, parse it, and return an object
 
 #### file merge fields
 

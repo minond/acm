@@ -7,6 +7,7 @@ var fs = require('fs'),
     path = require('path');
 
 var deep = require('deep-get-set'),
+    lazy = require('require-lazy-loader'),
     merge = require('lodash-node/modern/objects/merge'),
     partialRight = require('lodash-node/modern/functions/partialRight'),
     template = require('lodash-node/modern/utilities/template'),
@@ -62,11 +63,11 @@ function Configuration(config) {
      * @type {Object}
      */
     this.parsers = {
-        ini: require('ini'),
-        json5: require('json5'),
-        json: JSON,
-        yaml: require('yamljs'),
-        yml: require('yamljs'),
+        ini: lazy('ini parse'),
+        json5: lazy('json5 parse'),
+        json: JSON.parser,
+        yaml: lazy('yamljs parse'),
+        yml: lazy('yamljs parse'),
     };
 
     /**
@@ -171,7 +172,7 @@ Configuration.prototype.$load = function(file) {
             if (fs.existsSync(filepath)) {
                 contents = fs.readFileSync(filepath);
                 contents = template(contents, fields);
-                contents = parsers[ ext ].parse(contents);
+                contents = parsers[ ext ](contents);
                 merged = Configuration.$merge(merged, contents);
             }
         });

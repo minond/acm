@@ -1,6 +1,6 @@
 {
   "name": "acm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "another configuraiton module",
   "main": "src/configuration.js",
   "keywords": [
@@ -10,13 +10,18 @@
   "scripts": {
     "test": "grunt test"
   },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/minond/acm"
+  },
   "dependencies": {
     "yamljs": "~0.1.6",
     "json5": "~0.2.0",
     "ini": "~1.2.1",
     "lodash-node": "~2.4.1",
     "minimist": "~1.1.0",
-    "deep-get-set": "~0.1.1"
+    "deep-get-set": "~0.1.1",
+    "require-lazy-loader": "0.0.2"
   },
   "devDependencies": {
     "grunt-mkdir": "~0.1.2",
