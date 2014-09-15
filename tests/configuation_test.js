@@ -171,9 +171,9 @@ describe('Configuration', function () {
                 expect(contents.three).to.be(true);
             });
 
-            it('returns an empty obect when the file is not found', function () {
+            it('returns undefined when the file is not found', function () {
                 contents = config.$load('fsfdsadfasdf');
-                expect(contents).to.eql({});
+                expect(contents).to.eql(undefined);
             });
         });
 
@@ -208,6 +208,10 @@ describe('Configuration', function () {
 
         it('actually gets a configuration value', function () {
             expect(config.$readFromFile('config.ini')).to.be(true);
+        });
+
+        it('handles single level requests', function () {
+            expect(config.$readFromFile('hey')).to.eql({ test: true });
         });
 
         describe('bad inputs', function () {

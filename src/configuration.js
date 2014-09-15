@@ -65,7 +65,7 @@ function Configuration(config) {
     this.parsers = {
         ini: lazy('ini parse'),
         json5: lazy('json5 parse'),
-        json: JSON.parser,
+        json: JSON.parse,
         yaml: lazy('yamljs parse'),
         yml: lazy('yamljs parse'),
     };
@@ -157,7 +157,7 @@ Configuration.$merge = partialRight(merge, function deep(value, other) {
 Configuration.prototype.$load = function(file) {
     var contents,
         filepath,
-        merged = {},
+        merged,
         fields = this.fields,
         parsers = this.parsers;
 
@@ -173,7 +173,7 @@ Configuration.prototype.$load = function(file) {
                 contents = fs.readFileSync(filepath);
                 contents = template(contents, fields);
                 contents = parsers[ ext ](contents);
-                merged = Configuration.$merge(merged, contents);
+                merged = Configuration.$merge(merged || {}, contents);
             }
         });
     });
@@ -192,7 +192,7 @@ Configuration.prototype.$readFromFile = function(path) {
     var config = Configuration.$parseEntryPath(path),
         baseref = this.$load(config.file);
 
-    return deep(baseref, config.path);
+    return config.path ? deep(baseref, config.path) : baseref;
 };
 
 /**
