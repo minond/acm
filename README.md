@@ -20,11 +20,11 @@ example, when checking for:
 this is also all configurable:
 
 ```js
-// use defaults
+// instance of a Configuration object using the defaults
 var config1 = require('acm');
 
-// or overwrite any one of these settings
-var config2 = new Configuration({
+// create a new instance that uses another set of configuration data
+var config2 = new config1.Configuration({
     paths: [ 'myconfigs/', 'node_modules/hey/config/' ],
     env: {
         github: {
