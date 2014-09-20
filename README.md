@@ -20,10 +20,8 @@ example, when checking for:
 this is also all configurable:
 
 ```js
-var Configuration = require('acm'),
-
 // use defaults
-var config1 = new Configuration();
+var config1 = require('acm');
 
 // or overwrite any one of these settings
 var config2 = new Configuration({
