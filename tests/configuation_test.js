@@ -6,9 +6,9 @@ describe('Configuration', function () {
     beforeEach(function () {
         path = require('path');
         expect = require('expect.js');
-        Configuration = require('../src/configuration');
+        config = require('../src/configuration');
+        Configuration = config.Configuration;
 
-        config = new Configuration();
         test_configs = [
             path.join(__dirname, 'files', 'one'),
             path.join(__dirname, 'files', 'two'),

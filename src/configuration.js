@@ -239,4 +239,5 @@ Configuration.prototype.get = function(path) {
     }
 };
 
-module.exports = Configuration;
+module.exports = new Configuration();
+module.exports.Configuration = Configuration;
