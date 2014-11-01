@@ -48,6 +48,18 @@ describe('Configuration', function () {
                 expect(config.$env).to.be(process.env);
             });
         });
+
+        describe('package configuration', function () {
+            it('pushes the package default config directory when a package_root property is passed', function () {
+                config = new Configuration({ package_root: __dirname });
+                expect(config.$paths[1]).to.be(path.join(__dirname, 'config'));
+            });
+
+            it('pushes the package custom config directory when a package_config property is passed', function () {
+                config = new Configuration({ package_config: __dirname + 'hihihi' });
+                expect(config.$paths[1]).to.be(__dirname + 'hihihi');
+            });
+        });
     });
 
     describe('#$parseEntryPath()', function () {

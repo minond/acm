@@ -90,6 +90,14 @@ function Configuration(config) {
         '$readFromEnv',
         '$readFromFile'
     ];
+
+    if (config.package_root) {
+        config.package_config = path.join(config.package_root, 'config');
+    }
+
+    if (config.package_config) {
+        this.$paths.push(config.package_config);
+    }
 }
 
 /**

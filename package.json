@@ -1,6 +1,6 @@
 {
   "name": "acm",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "another configuraiton module",
   "main": "src/configuration.js",
   "keywords": [
