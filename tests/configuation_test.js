@@ -35,6 +35,11 @@ describe('Configuration', function () {
                 config = new Configuration({ env: { hi: true } });
                 expect(config.$env).to.eql({ hi: true });
             });
+
+            it('takes file_links', function () {
+                config = new Configuration({ file_links: { one: 'one.txt' } });
+                expect(config.$file_links).to.eql({ one: 'one.txt' });
+            });
         });
 
         describe('defaults argument values', function () {
@@ -187,6 +192,20 @@ describe('Configuration', function () {
                 contents = config.$load('fsfdsadfasdf');
                 expect(contents).to.eql(undefined);
             });
+
+            it('follows links', function () {
+                config.$file_links.xconfig = path.join(__dirname, 'files', 'three', 'linktest.json');
+                contents = config.$load('xconfig');
+                expect(contents.hi).to.be(true);
+            });
+
+            it('follows links and merges contents', function () {
+                config = new Configuration({ paths: test_configs });
+                config.$file_links.config = path.join(__dirname, 'files', 'three', 'linktest.json');
+                contents = config.$load('config');
+                expect(contents.hi).to.be(true);
+                expect(contents.two).to.be(true);
+            });
         });
 
         describe('content', function () {
@@ -210,6 +229,20 @@ describe('Configuration', function () {
                     expect(contents.hi).to.be('there');
                 });
             });
+        });
+    });
+
+    describe('#$readFromFile()', function () {
+        it('can read files with merge fields', function () {
+            config = new Configuration({ paths: test_configs });
+            config.fields.name = 'Marcos';
+            expect(config.$readFromFile('fields.name')).to.be('Marcos');
+        });
+
+        it('throws an error for invalid extensions', function () {
+            expect(function () {
+                config.$readFile('test.blah', 'blah');
+            }).to.throwError();
         });
     });
 

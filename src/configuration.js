@@ -19,6 +19,9 @@ var deep = require('deep-get-set'),
  *  - {Object} argv command line arguments. defaults to process.argv
  *  - {Object} env enviroment variables hash. defaults to prototype.env
  *  - {Array} paths to look for configuration in. defaults to `pwd`/config
+ *  - {String} package_root adds this directory (+ /config) to the $paths array
+ *  - {String} package_config adds this directory to the $paths array
+ *  - {Object} file_links creates a link between a file namd and any path
  */
 function Configuration(config) {
     config = config || {};
@@ -46,6 +49,14 @@ function Configuration(config) {
      * @type {Array}
      */
     this.$paths = config.paths || [ path.join(process.cwd(), 'config') ];
+
+    /**
+     * allows one to link a file path to a file name, which is then used when
+     * a search is done on that file name.
+     * @property $file_links
+     * @type {Object}
+     */
+    this.$file_links = config.file_links || {};
 
     /**
      * parsed and merged configuration objects are stored here.
@@ -157,34 +168,57 @@ Configuration.$merge = partialRight(merge, function deep(value, other) {
 });
 
 /**
+ * @method $readFile
+ * @throws Error
+ * @param {String} filepath
+ * @param {String} ext
+ * @return {Object}
+ */
+Configuration.prototype.$readFile = function (filepath, ext) {
+    var contents;
+
+    if (!(ext in this.parsers)) {
+        throw new Error('Invalid extension: .' + ext + ' on ' + filepath);
+    }
+
+    contents = fs.readFileSync(filepath);
+    contents = template(contents, this.fields);
+    return this.parsers[ ext ](contents);
+};
+
+/**
  * @method $load
  * @private
  * @param {string} file
  * @return {Object}
  */
 Configuration.prototype.$load = function(file) {
-    var contents,
-        filepath,
-        merged,
-        fields = this.fields,
-        parsers = this.parsers;
+    var cfilepath, cfilepathext, filepath, merged;
 
     if (file in this.$cache) {
         return this.$cache[ file ];
     }
 
+    // file all matching files in all possible directories
     uniq(this.$paths).forEach(function (dir) {
-        Object.keys(parsers).forEach(function (ext) {
+        Object.keys(this.parsers).forEach(function (ext) {
             filepath = path.join(dir, file) + '.' + ext;
 
             if (fs.existsSync(filepath)) {
-                contents = fs.readFileSync(filepath);
-                contents = template(contents, fields);
-                contents = parsers[ ext ](contents);
-                merged = Configuration.$merge(merged || {}, contents);
+                merged = Configuration.$merge(merged || {},
+                    this.$readFile(filepath, ext));
             }
-        });
-    });
+        }, this);
+    }, this);
+
+    // check if requested file in linked to another file
+    if (file in this.$file_links) {
+        cfilepath = this.$file_links[ file ];
+        cfilepathext = path.extname(cfilepath).substr(1);
+
+        merged = Configuration.$merge(merged || {},
+            this.$readFile(cfilepath, cfilepathext));
+    }
 
     return (this.$cache[ file ] = merged);
 };
