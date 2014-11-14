@@ -306,6 +306,19 @@ describe('Configuration', function () {
         });
     });
 
+    describe('#readFromUser()', function () {
+        it('handles unset variables', function () {
+            expect(config.$readFromUser('tests.test.test')).to.be(undefined);
+        });
+    });
+
+    describe('#set()', function () {
+        it('saves values to the $user object', function () {
+            config.set('user.name', 'Marcos');
+            expect(config.$user['user.name']).to.be('Marcos');
+        });
+    });
+
     describe('#get()', function () {
         var env, argv;
 
@@ -328,6 +341,13 @@ describe('Configuration', function () {
 
         it('takes from the config file when no env var is set', function () {
             expect(config.get('config.ini')).to.be(true);
+        });
+
+        it('users user set values over everything', function () {
+            argv.config = { ini: 'one' };
+            env.CONFIG_INI = 'two';
+            config.set('config.ini', 'hey man');
+            expect(config.get('config.ini')).to.be('hey man');
         });
     });
 });

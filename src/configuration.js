@@ -27,6 +27,14 @@ function Configuration(config) {
     config = config || {};
 
     /**
+     * settings set by the user
+     * @property $user
+     * @private
+     * @type {Object}
+     */
+    this.$user = {};
+
+    /**
      * enviroment variables hash
      * @property $env
      * @private
@@ -97,6 +105,7 @@ function Configuration(config) {
      * @type {Object}
      */
     this.readers = [
+        '$readFromUser',
         '$readFromArgv',
         '$readFromEnv',
         '$readFromFile'
@@ -258,6 +267,29 @@ Configuration.prototype.$readFromEnv = function(path) {
  */
 Configuration.prototype.$readFromArgv = function(path) {
     return deep(this.$argv, path);
+};
+
+/**
+ * gets a configuration value from the $user object
+ * @method $readFromUser
+ * @private
+ * @param {string} path
+ * @return {mixed}
+ */
+Configuration.prototype.$readFromUser = function(path) {
+    return this.$user[ path ];
+};
+
+/**
+ * user set configuration values
+ * @method set
+ * @param {string} path
+ * @param {*} val
+ * @return {Configuration}
+ */
+Configuration.prototype.set = function(path, val) {
+    this.$user[ path ] = val;
+    return this;
 };
 
 /**
