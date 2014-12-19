@@ -56,7 +56,7 @@ function Configuration(config) {
      * @private
      * @type {Array}
      */
-    this.$paths = config.paths || [ path.join(process.cwd(), 'config') ];
+    this.$paths = config.paths || [path.join(process.cwd(), 'config')];
 
     /**
      * allows one to link a file path to a file name, which is then used when
@@ -86,7 +86,7 @@ function Configuration(config) {
         json5: lazy('json5 parse'),
         json: JSON.parse,
         yaml: lazy('yamljs parse'),
-        yml: lazy('yamljs parse'),
+        yml: lazy('yamljs parse')
     };
 
     /**
@@ -136,7 +136,7 @@ function Configuration(config) {
  * @param {string} path
  * @return {Object} with a `file` and a `path` key
  */
-Configuration.$parseEntryPath = function(path) {
+Configuration.$parseEntryPath = function (path) {
     var parts = (path || '').split(DELIM);
     return {
         file: parts.shift(),
@@ -157,7 +157,7 @@ Configuration.$parseEntryPath = function(path) {
  * @param {string} path
  * @return {string}
  */
-Configuration.$parseEntryVariable = function(path) {
+Configuration.$parseEntryVariable = function (path) {
     return (path || '')
         .split(DELIM)
         .join(ENV_DELIM)
@@ -192,7 +192,7 @@ Configuration.prototype.$readFile = function (filepath, ext) {
 
     contents = fs.readFileSync(filepath);
     contents = template(contents, this.fields);
-    return this.parsers[ ext ](contents);
+    return this.parsers[ext](contents);
 };
 
 /**
@@ -201,11 +201,11 @@ Configuration.prototype.$readFile = function (filepath, ext) {
  * @param {string} file
  * @return {Object}
  */
-Configuration.prototype.$load = function(file) {
+Configuration.prototype.$load = function (file) {
     var cfilepath, cfilepathext, filepath, merged;
 
     if (file in this.$cache) {
-        return this.$cache[ file ];
+        return this.$cache[file];
     }
 
     // file all matching files in all possible directories
@@ -222,14 +222,14 @@ Configuration.prototype.$load = function(file) {
 
     // check if requested file in linked to another file
     if (file in this.$file_links) {
-        cfilepath = this.$file_links[ file ];
+        cfilepath = this.$file_links[file];
         cfilepathext = path.extname(cfilepath).substr(1);
 
         merged = Configuration.$merge(merged || {},
             this.$readFile(cfilepath, cfilepathext));
     }
 
-    return (this.$cache[ file ] = merged);
+    return (this.$cache[file] = merged);
 };
 
 /**
@@ -239,7 +239,7 @@ Configuration.prototype.$load = function(file) {
  * @param {string} path
  * @return {mixed}
  */
-Configuration.prototype.$readFromFile = function(path) {
+Configuration.prototype.$readFromFile = function (path) {
     var config = Configuration.$parseEntryPath(path),
         baseref = this.$load(config.file);
 
@@ -253,9 +253,9 @@ Configuration.prototype.$readFromFile = function(path) {
  * @param {string} path
  * @return {mixed}
  */
-Configuration.prototype.$readFromEnv = function(path) {
+Configuration.prototype.$readFromEnv = function (path) {
     var envvar = Configuration.$parseEntryVariable(path);
-    return envvar in this.$env ? this.$env[ envvar ] : undefined;
+    return envvar in this.$env ? this.$env[envvar] : undefined;
 };
 
 /**
@@ -265,7 +265,7 @@ Configuration.prototype.$readFromEnv = function(path) {
  * @param {string} path
  * @return {mixed}
  */
-Configuration.prototype.$readFromArgv = function(path) {
+Configuration.prototype.$readFromArgv = function (path) {
     return deep(this.$argv, path);
 };
 
@@ -276,8 +276,8 @@ Configuration.prototype.$readFromArgv = function(path) {
  * @param {string} path
  * @return {mixed}
  */
-Configuration.prototype.$readFromUser = function(path) {
-    return this.$user[ path ];
+Configuration.prototype.$readFromUser = function (path) {
+    return this.$user[path];
 };
 
 /**
@@ -287,8 +287,8 @@ Configuration.prototype.$readFromUser = function(path) {
  * @param {*} val
  * @return {Configuration}
  */
-Configuration.prototype.set = function(path, val) {
-    this.$user[ path ] = val;
+Configuration.prototype.set = function (path, val) {
+    this.$user[path] = val;
     return this;
 };
 
@@ -299,13 +299,13 @@ Configuration.prototype.set = function(path, val) {
  * @param {string} path
  * @return {mixed}
  */
-Configuration.prototype.get = function(path) {
+Configuration.prototype.get = function (path) {
     var index = 0,
         len = this.readers.length,
         val;
 
     for (; index < len; index++) {
-        val = this[ this.readers[ index ] ](path);
+        val = this[this.readers[index]](path);
 
         if (val !== undefined) {
             return val;
