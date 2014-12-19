@@ -28,7 +28,7 @@ example, when checking for:
 
 #### file extension and parsers
 
-available extensions are: `.ini`, `.json5`, `.json`, `.yaml`, and `.yml`.
+available extensions are: `.ini`, `.json`/`.json5`, and `.yaml`/`.yml`.
 parsers for each of these extensions are located in `acm.prototype.parsers`.
 adding new properties to this object will add support for addition file
 extension. property values should be functions that take a string, parse it,
