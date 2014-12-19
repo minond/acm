@@ -56,7 +56,10 @@ function Configuration(config) {
      * @private
      * @type {Array}
      */
-    this.$paths = config.paths || [path.join(process.cwd(), 'config')];
+    this.$paths = config.paths || [
+        path.join(process.cwd(), 'config'),
+        process.cwd()
+    ];
 
     /**
      * allows one to link a file path to a file name, which is then used when

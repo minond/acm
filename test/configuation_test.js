@@ -45,7 +45,10 @@ describe('Configuration', function () {
         describe('defaults argument values', function () {
             it('local config directory for paths', function () {
                 config = new Configuration();
-                expect(config.$paths).to.eql([path.join(process.cwd(), 'config')]);
+                expect(config.$paths).to.eql([
+                    path.join(process.cwd(), 'config'),
+                    process.cwd()
+                ]);
             });
 
             it('global process for env', function () {
@@ -57,12 +60,12 @@ describe('Configuration', function () {
         describe('package configuration', function () {
             it('pushes the package default config directory when a package_root property is passed', function () {
                 config = new Configuration({ package_root: __dirname });
-                expect(config.$paths[1]).to.be(path.join(__dirname, 'config'));
+                expect(config.$paths[2]).to.be(path.join(__dirname, 'config'));
             });
 
             it('pushes the package custom config directory when a package_config property is passed', function () {
                 config = new Configuration({ package_config: __dirname + 'hihihi' });
-                expect(config.$paths[1]).to.be(__dirname + 'hihihi');
+                expect(config.$paths[2]).to.be(__dirname + 'hihihi');
             });
         });
     });
