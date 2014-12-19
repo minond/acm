@@ -1,5 +1,7 @@
 -include vendor/minond/scaffold/plugins/js.mk
 
+all:: lint test
+
 dependecies:
 	git submodule update --init
 

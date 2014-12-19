@@ -10,4 +10,4 @@ after_success:
   - make js-coveralls
 
 script:
-  - make lint test
+  - make
