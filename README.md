@@ -15,7 +15,7 @@ example, when checking for:
 
 * arguments: defaults to `process.argv`
 * environment variables: defaults to `process.env`
-* files: defaults to `$PWD/config/`
+* files: defaults to `$PWD/config/` then `$PWD`
 
 this is also all configurable:
 
