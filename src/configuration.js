@@ -316,5 +316,21 @@ Configuration.prototype.get = function (path) {
     }
 };
 
-module.exports = new Configuration();
+/**
+ * Configuration.prototype.get shortcut
+ * @param {Object} config
+ * @return {Function}
+ */
+function configuration(config) {
+    var ref = new Configuration(config);
+
+    var get = ref.get.bind(ref);
+    get.set = ref.set.bind(ref);
+    get.ref = ref;
+
+    return get;
+}
+
+module.exports = configuration();
+module.exports.configuration = configuration;
 module.exports.Configuration = Configuration;

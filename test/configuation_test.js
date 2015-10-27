@@ -1,13 +1,14 @@
 describe('Configuration', function () {
     'use strict';
 
-    var Configuration, config, expect, path, test_configs;
+    var Configuration, config, configuration, expect, path, test_configs;
 
     beforeEach(function () {
         path = require('path');
         expect = require('expect.js');
         config = require('../src/configuration');
         Configuration = config.Configuration;
+        configuration = new Configuration();
 
         test_configs = [
             path.join(__dirname, 'files', 'one'),
@@ -16,56 +17,68 @@ describe('Configuration', function () {
         ];
     });
 
+    describe('#call()', function () {
+        it('calling the default exports is a shortcut call get function', function () {
+            process.env.ACM_TEST_VALUE = '123';
+            expect(config('acm.test.value')).to.be(process.env.ACM_TEST_VALUE);
+        });
+
+        it('has a set function', function () {
+            config.set('acm.test.value', '321');
+            expect(config('acm.test.value')).to.be('321');
+        });
+    });
+
     describe('#constructor()', function () {
         it('can be instanciated', function () {
-            expect(config).to.be.a(Configuration);
+            expect(configuration).to.be.a(Configuration);
         });
 
         it('comes with its own parser objects', function () {
-            expect(config.parsers).to.be.a(Object);
+            expect(configuration.parsers).to.be.a(Object);
         });
 
         describe('arguments', function () {
             it('takes custom paths', function () {
-                config = new Configuration({ paths: ['one', 'two'] });
-                expect(config.$paths).to.eql(['one', 'two']);
+                configuration = new Configuration({ paths: ['one', 'two'] });
+                expect(configuration.$paths).to.eql(['one', 'two']);
             });
 
             it('takes custom env vars', function () {
-                config = new Configuration({ env: { hi: true } });
-                expect(config.$env).to.eql({ hi: true });
+                configuration = new Configuration({ env: { hi: true } });
+                expect(configuration.$env).to.eql({ hi: true });
             });
 
             it('takes file_links', function () {
-                config = new Configuration({ file_links: { one: 'one.txt' } });
-                expect(config.$file_links).to.eql({ one: 'one.txt' });
+                configuration = new Configuration({ file_links: { one: 'one.txt' } });
+                expect(configuration.$file_links).to.eql({ one: 'one.txt' });
             });
         });
 
         describe('defaults argument values', function () {
             it('local config directory for paths', function () {
-                config = new Configuration();
-                expect(config.$paths).to.eql([
+                configuration = new Configuration();
+                expect(configuration.$paths).to.eql([
                     path.join(process.cwd(), 'config'),
                     process.cwd()
                 ]);
             });
 
             it('global process for env', function () {
-                config = new Configuration();
-                expect(config.$env).to.be(process.env);
+                configuration = new Configuration();
+                expect(configuration.$env).to.be(process.env);
             });
         });
 
         describe('package configuration', function () {
             it('pushes the package default config directory when a package_root property is passed', function () {
-                config = new Configuration({ package_root: __dirname });
-                expect(config.$paths[2]).to.be(path.join(__dirname, 'config'));
+                configuration = new Configuration({ package_root: __dirname });
+                expect(configuration.$paths[2]).to.be(path.join(__dirname, 'config'));
             });
 
             it('pushes the package custom config directory when a package_config property is passed', function () {
-                config = new Configuration({ package_config: __dirname + 'hihihi' });
-                expect(config.$paths[2]).to.be(__dirname + 'hihihi');
+                configuration = new Configuration({ package_config: __dirname + 'hihihi' });
+                expect(configuration.$paths[2]).to.be(__dirname + 'hihihi');
             });
         });
     });
@@ -175,8 +188,8 @@ describe('Configuration', function () {
         var contents;
 
         beforeEach(function () {
-            config = new Configuration({ paths: test_configs });
-            contents = config.$load('config');
+            configuration = new Configuration({ paths: test_configs });
+            contents = configuration.$load('config');
         });
 
         describe('file search', function () {
@@ -192,20 +205,20 @@ describe('Configuration', function () {
             });
 
             it('returns undefined when the file is not found', function () {
-                contents = config.$load('fsfdsadfasdf');
+                contents = configuration.$load('fsfdsadfasdf');
                 expect(contents).to.eql(undefined);
             });
 
             it('follows links', function () {
-                config.$file_links.xconfig = path.join(__dirname, 'files', 'three', 'linktest.json');
-                contents = config.$load('xconfig');
+                configuration.$file_links.xconfig = path.join(__dirname, 'files', 'three', 'linktest.json');
+                contents = configuration.$load('xconfig');
                 expect(contents.hi).to.be(true);
             });
 
             it('follows links and merges contents', function () {
-                config = new Configuration({ paths: test_configs });
-                config.$file_links.config = path.join(__dirname, 'files', 'three', 'linktest.json');
-                contents = config.$load('config');
+                configuration = new Configuration({ paths: test_configs });
+                configuration.$file_links.config = path.join(__dirname, 'files', 'three', 'linktest.json');
+                contents = configuration.$load('config');
                 expect(contents.hi).to.be(true);
                 expect(contents.two).to.be(true);
             });
@@ -214,20 +227,20 @@ describe('Configuration', function () {
         describe('content', function () {
             describe('caching', function () {
                 it('caches to memory', function () {
-                    expect(config.$cache.config).to.be.an(Object);
+                    expect(configuration.$cache.config).to.be.an(Object);
                 });
 
                 it('returns a reference', function () {
-                    config.$cache.config.manual = true;
-                    contents = config.$load('config');
+                    configuration.$cache.config.manual = true;
+                    contents = configuration.$load('config');
                     expect(contents.manual).to.be(true);
                 });
             });
 
             describe('parsing', function () {
                 it('supports custom extensions', function () {
-                    config.parsers.type = config.parsers.yaml;
-                    contents = config.$load('another');
+                    configuration.parsers.type = configuration.parsers.yaml;
+                    contents = configuration.$load('another');
                     expect(contents).to.be.an(Object);
                     expect(contents.hi).to.be('there');
                 });
@@ -237,38 +250,38 @@ describe('Configuration', function () {
 
     describe('#$readFromFile()', function () {
         it('can read files with merge fields', function () {
-            config = new Configuration({ paths: test_configs });
-            config.fields.name = 'Marcos';
-            expect(config.$readFromFile('fields.name')).to.be('Marcos');
+            configuration = new Configuration({ paths: test_configs });
+            configuration.fields.name = 'Marcos';
+            expect(configuration.$readFromFile('fields.name')).to.be('Marcos');
         });
 
         it('throws an error for invalid extensions', function () {
             expect(function () {
-                config.$readFile('test.blah', 'blah');
+                configuration.$readFile('test.blah', 'blah');
             }).to.throwError();
         });
     });
 
     describe('#$readFromFile()', function () {
         beforeEach(function () {
-            config = new Configuration({ paths: test_configs });
+            configuration = new Configuration({ paths: test_configs });
         });
 
         it('actually gets a configuration value', function () {
-            expect(config.$readFromFile('config.ini')).to.be(true);
+            expect(configuration.$readFromFile('config.ini')).to.be(true);
         });
 
         it('handles single level requests', function () {
-            expect(config.$readFromFile('hey')).to.eql({ test: true });
+            expect(configuration.$readFromFile('hey')).to.eql({ test: true });
         });
 
         describe('bad inputs', function () {
             it('handles bad files', function () {
-                expect(config.$readFromFile('hihihi')).to.eql(undefined);
+                expect(configuration.$readFromFile('hihihi')).to.eql(undefined);
             });
 
             it('handles bad values', function () {
-                expect(config.$readFromFile('config.bad.bad.bad')).to.eql(undefined);
+                expect(configuration.$readFromFile('config.bad.bad.bad')).to.eql(undefined);
             });
         });
     });
@@ -278,16 +291,16 @@ describe('Configuration', function () {
 
         beforeEach(function () {
             env = {};
-            config = new Configuration({ env: env });
+            configuration = new Configuration({ env: env });
         });
 
         it('returns undefined when not found', function () {
-            expect(config.$readFromEnv('config.ini.hey')).to.be(undefined);
+            expect(configuration.$readFromEnv('config.ini.hey')).to.be(undefined);
         });
 
         it('finds variables', function () {
             env.CONFIG_INI_HEY = true;
-            expect(config.$readFromEnv('config.ini.hey')).to.be(true);
+            expect(configuration.$readFromEnv('config.ini.hey')).to.be(true);
         });
     });
 
@@ -296,29 +309,29 @@ describe('Configuration', function () {
 
         beforeEach(function () {
             argv = {};
-            config = new Configuration({ argv: argv });
+            configuration = new Configuration({ argv: argv });
         });
 
         it('returns undefined when not found', function () {
-            expect(config.$readFromArgv('config.ini.hey')).to.be(undefined);
+            expect(configuration.$readFromArgv('config.ini.hey')).to.be(undefined);
         });
 
         it('finds variables', function () {
             argv.config = { ini: { hey: true } };
-            expect(config.$readFromArgv('config.ini.hey')).to.be(true);
+            expect(configuration.$readFromArgv('config.ini.hey')).to.be(true);
         });
     });
 
     describe('#readFromUser()', function () {
         it('handles unset variables', function () {
-            expect(config.$readFromUser('tests.test.test')).to.be(undefined);
+            expect(configuration.$readFromUser('tests.test.test')).to.be(undefined);
         });
     });
 
     describe('#set()', function () {
         it('saves values to the $user object', function () {
-            config.set('user.name', 'Marcos');
-            expect(config.$user['user.name']).to.be('Marcos');
+            configuration.set('user.name', 'Marcos');
+            expect(configuration.$user['user.name']).to.be('Marcos');
         });
     });
 
@@ -328,29 +341,29 @@ describe('Configuration', function () {
         beforeEach(function () {
             env = {};
             argv = {};
-            config = new Configuration({ paths: test_configs, env: env, argv: argv });
+            configuration = new Configuration({ paths: test_configs, env: env, argv: argv });
         });
 
         it('prefers a command line argument over an enviroment variable', function () {
             argv.config = { ini: 'heyhey' };
             env.CONFIG_INI = 'heyhey1';
-            expect(config.get('config.ini')).to.be('heyhey');
+            expect(configuration.get('config.ini')).to.be('heyhey');
         });
 
-        it('prefers an enviroment variable over a config file', function () {
+        it('prefers an enviroment variable over a configuration file', function () {
             env.CONFIG_INI = 'heyhey';
-            expect(config.get('config.ini')).to.be('heyhey');
+            expect(configuration.get('config.ini')).to.be('heyhey');
         });
 
         it('takes from the config file when no env var is set', function () {
-            expect(config.get('config.ini')).to.be(true);
+            expect(configuration.get('config.ini')).to.be(true);
         });
 
         it('users user set values over everything', function () {
             argv.config = { ini: 'one' };
             env.CONFIG_INI = 'two';
-            config.set('config.ini', 'hey man');
-            expect(config.get('config.ini')).to.be('hey man');
+            configuration.set('config.ini', 'hey man');
+            expect(configuration.get('config.ini')).to.be('hey man');
         });
     });
 });
