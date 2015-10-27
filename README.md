@@ -8,9 +8,11 @@ different formats.
 #### usage
 
 just `require`ing `acm` will return an instantiated Configuration object that
-uses some pretty standard [defaults](#defaults). this object will have a `.get`
-method that takes a string which is used to retrieve an configuration entry.
-running `config.get('github.username')` will result in the following checks:
+uses some pretty standard [defaults](#defaults). this is a function you can use
+to get your configuration. the funciton object will also have a `.set` method
+you can use to update values (in memory) and a `.ref` property which is the
+actual `Configuration` instance. running `config('github.username')` will
+result in the following checks:
 
 1. a `--github.username` command line argument will be checked
 2. a `GITHUB_USERNAME` environment variable will be checked
