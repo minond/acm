@@ -1,8 +1,6 @@
-JAVA = java
-CLJS = cljs.jar
-CLOJURE = clojure.main
+LEIN = lein
 
 default: build
 
 build:
-	$(JAVA) -cp $(CLJS):src $(CLOJURE) build.clj
+	$(LEIN) cljsbuild once

@@ -1,5 +1,13 @@
 (ns acm.core)
 
-(enable-console-print!)
+(defn config [label]
+  (System/getenv label))
 
-(println "Hello world!")
+;;; Tests
+(defn tests []
+  (enable-console-print!)
+  ;; (print (config "BASH"))
+  (print "BASH")
+)
+
+(tests)
