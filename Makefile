@@ -1,12 +1,8 @@
--include .scaffold/plugins/js.mk
+JAVA = java
+CLJS = cljs.jar
+CLOJURE = clojure.main
 
-all:: lint test
+default: build
 
-dependecies:
-	git submodule update --init
-
-install: dependecies
-	npm install
-
-test: install js-test
-lint: install js-lint
+build:
+	$(JAVA) -cp $(CLJS):src $(CLOJURE) build.clj
