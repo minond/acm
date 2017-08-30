@@ -13,7 +13,7 @@
 ;;; Tests
 (defn tests []
   (enable-console-print!)
-  (print (config "BASH"))
+  (print (env/def "BASH"))
   (print "BASH")
 )
 
